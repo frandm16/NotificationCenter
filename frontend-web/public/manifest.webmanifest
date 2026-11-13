@@ -1,0 +1,17 @@
+{
+  "name": "Notification Center",
+  "short_name": "Notifications",
+  "description": "Centralized Notification Hub for Homelab & Self-Hosted Services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
