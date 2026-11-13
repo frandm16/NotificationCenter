@@ -158,9 +158,9 @@ export function App() {
         pushEnabled={pushEnabled}
       />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-3 sm:px-6 py-4 sm:py-6 pb-24 sm:pb-8">
         {activeTab === 'notifications' ? (
-          <div className="space-y-4">
+          <div className="space-y-3.5 sm:space-y-4">
             <NotificationFilters
               sources={sources}
               selectedSource={selectedSource}
@@ -184,7 +184,7 @@ export function App() {
                 <span>Loading notifications...</span>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] p-12 text-center shadow-sm">
+              <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] p-8 sm:p-12 text-center shadow-sm">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400 mb-3 border border-indigo-500/20">
                   <Bell size={22} />
                 </div>
@@ -194,7 +194,7 @@ export function App() {
                 </p>
               </div>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-2.5 sm:space-y-3">
                 {notifications.map((item) => (
                   <NotificationCard
                     key={item.id}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { AppNotification } from '../types/notification';
 
 export type SseStatus = 'connecting' | 'connected' | 'disconnected';
@@ -13,6 +13,8 @@ interface SseHandlers {
 
 export function useSseStream(handlers: SseHandlers, enabled: boolean = true) {
   const [status, setStatus] = useState<SseStatus>('disconnected');
+  const handlersRef = useRef(handlers);
+  handlersRef.current = handlers;
 
   useEffect(() => {
     if (!enabled) {
@@ -35,7 +37,7 @@ export function useSseStream(handlers: SseHandlers, enabled: boolean = true) {
     eventSource.addEventListener('notification:new', (event) => {
       try {
         const notification = JSON.parse(event.data) as AppNotification;
-        handlers.onNewNotification?.(notification);
+        handlersRef.current.onNewNotification?.(notification);
       } catch {
         // Ignore parse error
       }
@@ -44,20 +46,20 @@ export function useSseStream(handlers: SseHandlers, enabled: boolean = true) {
     eventSource.addEventListener('notification:read', (event) => {
       try {
         const data = JSON.parse(event.data) as { id: number; read: boolean };
-        handlers.onNotificationRead?.(data);
+        handlersRef.current.onNotificationRead?.(data);
       } catch {
         // Ignore parse error
       }
     });
 
     eventSource.addEventListener('notification:read-all', () => {
-      handlers.onAllRead?.();
+      handlersRef.current.onAllRead?.();
     });
 
     eventSource.addEventListener('notification:deleted', (event) => {
       try {
         const data = JSON.parse(event.data) as { id: number };
-        handlers.onNotificationDeleted?.(data);
+        handlersRef.current.onNotificationDeleted?.(data);
       } catch {
         // Ignore parse error
       }
@@ -67,7 +69,7 @@ export function useSseStream(handlers: SseHandlers, enabled: boolean = true) {
       try {
         const count = Number(event.data);
         if (!Number.isNaN(count)) {
-          handlers.onUnreadCount?.(count);
+          handlersRef.current.onUnreadCount?.(count);
         }
       } catch {
         // Ignore parse error

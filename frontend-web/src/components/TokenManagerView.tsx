@@ -97,11 +97,11 @@ export function TokenManagerView() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-white">API Tokens</h1>
-          <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">API Tokens</h1>
+          <p className="mt-0.5 text-xs text-[var(--app-text-muted)]">
             Services authenticate with Bearer tokens to ingest or read notifications.
           </p>
         </div>
@@ -112,7 +112,7 @@ export function TokenManagerView() {
             setError(null);
             setCreateModalOpen(true);
           }}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-indigo-500 transition-colors shadow-sm shadow-indigo-600/20"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-indigo-500 transition-colors shadow-sm shadow-indigo-600/20 w-full sm:w-auto"
         >
           <Plus size={15} />
           <span>Generate New Token</span>
@@ -127,16 +127,16 @@ export function TokenManagerView() {
       )}
 
       {createdResult && (
-        <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/30 to-[var(--app-card-bg)] p-5 shadow-lg space-y-3">
+        <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/30 to-[var(--app-card-bg)] p-4 sm:p-5 shadow-lg space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-indigo-400 font-semibold text-sm">
+            <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs sm:text-sm">
               <ShieldAlert size={18} />
               <span>Token Generated Successfully</span>
             </div>
             <button
               type="button"
               onClick={() => setCreatedResult(null)}
-              className="text-neutral-400 hover:text-white"
+              className="text-neutral-400 hover:text-white p-1"
             >
               <X size={16} />
             </button>
@@ -160,104 +160,180 @@ export function TokenManagerView() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] overflow-hidden shadow-sm">
-        {loading && tokens.length === 0 ? (
-          <div className="p-8 text-center text-xs text-[var(--app-text-muted)]">
-            Loading tokens...
-          </div>
-        ) : tokens.length === 0 ? (
-          <div className="p-12 text-center">
-            <Key size={28} className="mx-auto text-neutral-600 mb-3" />
-            <p className="text-sm font-semibold text-white">No API Tokens generated</p>
-            <p className="mt-1 text-xs text-neutral-400">
-              Generate a token for StudyZen, Proxmox, NUT, or Home to start sending alerts.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="border-b border-[var(--app-border)] bg-neutral-900/50 text-neutral-400 font-semibold">
-                <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Source Tag</th>
-                  <th className="px-4 py-3">Token Prefix</th>
-                  <th className="px-4 py-3">Scopes</th>
-                  <th className="px-4 py-3">Last Used</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--app-border)]">
-                {tokens.map((token) => (
-                  <tr key={token.id} className="hover:bg-neutral-800/20 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-white">{token.name}</td>
-                    <td className="px-4 py-3">
+      {loading && tokens.length === 0 ? (
+        <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] p-8 text-center text-xs text-[var(--app-text-muted)]">
+          Loading tokens...
+        </div>
+      ) : tokens.length === 0 ? (
+        <div className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] p-8 sm:p-12 text-center">
+          <Key size={28} className="mx-auto text-neutral-600 mb-3" />
+          <p className="text-sm font-semibold text-white">No API Tokens generated</p>
+          <p className="mt-1 text-xs text-neutral-400">
+            Generate a token for StudyZen, Proxmox, NUT, or Home to start sending alerts.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Mobile Card List (md:hidden) */}
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {tokens.map((token) => (
+              <div
+                key={token.id}
+                className="rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] p-4 space-y-3 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="font-semibold text-sm text-white">{token.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
                       <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-mono text-neutral-300">
                         {token.source}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-neutral-400">{token.tokenPrefix}...</td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-1">
-                        {token.scopes.map((s) => (
-                          <span
-                            key={s}
-                            className="rounded bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 text-[10px] font-medium text-indigo-400"
-                          >
-                            {s}
+                      <span className="font-mono text-xs text-neutral-400">
+                        {token.tokenPrefix}...
+                      </span>
+                    </div>
+                  </div>
+
+                  {token.active ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 shrink-0">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                      Active
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-400 shrink-0">
+                      <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                      Revoked
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-neutral-400 pt-2 border-t border-neutral-800/60">
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {token.scopes.map((s) => (
+                      <span
+                        key={s}
+                        className="rounded bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 text-[10px] font-medium text-indigo-400"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+
+                  <span className="text-[11px]">
+                    Used: {token.lastUsedAt ? formatRelativeTime(token.lastUsedAt) : 'Never'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  {token.active && (
+                    <button
+                      type="button"
+                      onClick={() => void handleRevoke(token.id)}
+                      className="rounded-lg border border-neutral-800 bg-neutral-900 px-2.5 py-1 text-xs font-medium text-neutral-300 hover:text-amber-400 transition-colors"
+                    >
+                      Revoke
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => void handleDelete(token.id)}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-rose-400 transition-colors"
+                    title="Delete token"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop & Tablet Table (hidden md:block) */}
+          <div className="hidden md:block rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-[var(--app-border)] bg-neutral-900/50 text-neutral-400 font-semibold">
+                  <tr>
+                    <th className="px-4 py-3">Name</th>
+                    <th className="px-4 py-3">Source Tag</th>
+                    <th className="px-4 py-3">Token Prefix</th>
+                    <th className="px-4 py-3">Scopes</th>
+                    <th className="px-4 py-3">Last Used</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--app-border)]">
+                  {tokens.map((token) => (
+                    <tr key={token.id} className="hover:bg-neutral-800/20 transition-colors">
+                      <td className="px-4 py-3 font-semibold text-white">{token.name}</td>
+                      <td className="px-4 py-3">
+                        <span className="rounded-md bg-neutral-800 px-2 py-0.5 text-[11px] font-mono text-neutral-300">
+                          {token.source}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 font-mono text-neutral-400">{token.tokenPrefix}...</td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-1">
+                          {token.scopes.map((s) => (
+                            <span
+                              key={s}
+                              className="rounded bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 text-[10px] font-medium text-indigo-400"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-neutral-400">
+                        {token.lastUsedAt ? formatRelativeTime(token.lastUsedAt) : 'Never'}
+                      </td>
+                      <td className="px-4 py-3">
+                        {token.active ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                            Active
                           </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-neutral-400">
-                      {token.lastUsedAt ? formatRelativeTime(token.lastUsedAt) : 'Never'}
-                    </td>
-                    <td className="px-4 py-3">
-                      {token.active ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                          Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-400">
-                          <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
-                          Revoked
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        {token.active && (
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                            Revoked
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {token.active && (
+                            <button
+                              type="button"
+                              onClick={() => void handleRevoke(token.id)}
+                              className="rounded-lg px-2 py-1 text-[11px] font-medium text-neutral-400 hover:bg-neutral-800 hover:text-amber-400 transition-colors"
+                            >
+                              Revoke
+                            </button>
+                          )}
                           <button
                             type="button"
-                            onClick={() => void handleRevoke(token.id)}
-                            className="rounded-lg px-2 py-1 text-[11px] font-medium text-neutral-400 hover:bg-neutral-800 hover:text-amber-400 transition-colors"
+                            onClick={() => void handleDelete(token.id)}
+                            className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:bg-rose-500/15 hover:text-rose-400 transition-colors"
+                            title="Delete token"
                           >
-                            Revoke
+                            <Trash2 size={13} />
                           </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => void handleDelete(token.id)}
-                          className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:bg-rose-500/15 hover:text-rose-400 transition-colors"
-                          title="Delete token"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
 
       {createModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
           <div className="w-full max-w-md rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] shadow-2xl overflow-hidden animate-rise">
-            <header className="flex items-center justify-between border-b border-[var(--app-border)] px-5 py-4">
+            <header className="flex items-center justify-between border-b border-[var(--app-border)] px-4 sm:px-5 py-3.5 sm:py-4">
               <div className="flex items-center gap-2">
                 <Key size={18} className="text-indigo-400" />
                 <h2 className="text-sm font-bold text-white">Generate API Token</h2>
@@ -271,7 +347,7 @@ export function TokenManagerView() {
               </button>
             </header>
 
-            <form onSubmit={handleCreate} className="p-5 space-y-4">
+            <form onSubmit={handleCreate} className="p-4 sm:p-5 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-300 mb-1">
                   Token Name

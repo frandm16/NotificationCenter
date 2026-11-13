@@ -49,9 +49,9 @@ export function TestDispatchModal({ isOpen, onClose, onSuccess }: TestDispatchMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-      <div className="w-full max-w-md rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] shadow-2xl overflow-hidden animate-rise">
-        <header className="flex items-center justify-between border-b border-[var(--app-border)] px-5 py-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs">
+      <div className="w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl border border-[var(--app-border)] bg-[var(--app-card-bg)] shadow-2xl overflow-hidden animate-rise">
+        <header className="flex items-center justify-between border-b border-[var(--app-border)] px-4 sm:px-5 py-3.5 sm:py-4 shrink-0">
           <div className="flex items-center gap-2">
             <Send size={18} className="text-indigo-400" />
             <h2 className="text-sm font-bold text-white">Dispatch Test Notification</h2>
@@ -66,7 +66,7 @@ export function TestDispatchModal({ isOpen, onClose, onSuccess }: TestDispatchMo
           </button>
         </header>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-3.5 sm:space-y-4 overflow-y-auto">
           {error && (
             <div className="flex items-center gap-2 rounded-lg bg-rose-500/10 border border-rose-500/20 px-3 py-2 text-xs text-rose-400">
               <AlertCircle size={14} className="shrink-0" />
@@ -74,7 +74,7 @@ export function TestDispatchModal({ isOpen, onClose, onSuccess }: TestDispatchMo
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="block text-xs font-semibold text-neutral-300 mb-1">
                 Source Tag
@@ -83,7 +83,7 @@ export function TestDispatchModal({ isOpen, onClose, onSuccess }: TestDispatchMo
                 type="text"
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
-                placeholder="studyzen, proxmox, nut..."
+                placeholder="studyzen, proxmox..."
                 className="w-full rounded-xl border border-[var(--app-border)] bg-neutral-900/80 px-3 py-2 text-xs text-white placeholder-neutral-500 focus:border-indigo-500 focus:outline-none"
                 required
               />
