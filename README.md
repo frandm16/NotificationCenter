@@ -1,16 +1,19 @@
 # Notification Center
 
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vite.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+<p align="center">
+  <a href="https://openjdk.org/"><img src="https://img.shields.io/badge/Java-21-ED8B00?style=flat&logo=openjdk&logoColor=white" alt="Java" /></a>
+  <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=flat&logo=springboot&logoColor=white" alt="Spring Boot" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" /></a>
+  <br />
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black" alt="React" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://vite.dev/"><img src="https://img.shields.io/badge/Vite-6.x-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>
+</p>
 
 Centralized notification receiver and dashboard for self-hosted services and homelab infrastructure. It ingests alerts over HTTP POST, verifies service API tokens, streams updates in real time to a web dashboard, and dispatches Web Push notifications to mobile devices.
 
-Designed to integrate with StudyZen, Proxmox VE, NUT (Network UPS Tools), smart plugs, and the Home dashboard.
 
 ---
 
@@ -19,7 +22,7 @@ Designed to integrate with StudyZen, Proxmox VE, NUT (Network UPS Tools), smart 
 ### Ingestion and Token Security
 - External services send alerts to `POST /api/v1/notifications` using a Bearer token (`nc_live_*`).
 - Tokens are stored as SHA-256 hashes with a visible prefix for identification. Raw tokens are generated once and never stored in plain text.
-- The `source` field (e.g. `studyzen`, `proxmox`, `nut`) is bound to the token and determined by the server upon authentication, preventing callers from spoofing origin services.
+- The `source` field (e.g. `studyzen`, `proxmox`) is bound to the token and determined by the server upon authentication, preventing callers from spoofing origin services.
 - Alert deduplication via `dedupKey`: when an unread notification with the same key exists, its message and timestamp are updated instead of creating a duplicate row.
 
 ### Dashboard and Access Control
@@ -39,10 +42,9 @@ Designed to integrate with StudyZen, Proxmox VE, NUT (Network UPS Tools), smart 
 
 ## Tech Stack
 
-- **Backend**: Java 21, Spring Boot 3.2, Spring Data JPA, Spring Security, Bouncy Castle, PostgreSQL 16, Flyway.
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS 4, Lucide Icons.
-- **Reverse Proxy**: Nginx configured with unbuffered chunked streaming for SSE.
-- **Containers**: Docker Compose, Eclipse Temurin 21 JRE, Node 22 Alpine, Nginx Alpine.
+- **Backend**: Java 21, Spring Boot 3.2, PostgreSQL 16.
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS 4.
+- **Containers**: Docker Compose.
 
 ---
 
@@ -99,11 +101,6 @@ Ensure `JWT_SECRET`, `DB_PASSWORD`, and `ADMIN_PASSWORD` are defined before laun
 docker compose up -d --build
 ```
 
-Services will be available at:
-- Web Dashboard: `http://localhost:7778`
-- Backend API: `http://localhost:8083`
-- PostgreSQL: `localhost:5432` (internal network by default)
-
 ### 3. Local Development
 
 Backend:
@@ -136,11 +133,11 @@ Content-Type: application/json
 Body:
 ```json
 {
-  "title": "UPS Battery Alert",
-  "body": "Utility power lost. Remaining runtime: 35 minutes.",
+  "title": "Upcoming Exam",
+  "body": "Exam for tomorrow...",
   "level": "WARNING",
-  "url": "https://pve.frandm.dev",
-  "dedupKey": "ups-power-loss"
+  "url": "https://studyzen.frandm.dev",
+  "dedupKey": "studyzen"
 }
 ```
 
