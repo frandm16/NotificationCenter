@@ -2,6 +2,7 @@ package com.frandm.notificationcenter.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frandm.notificationcenter.security.filter.DualAuthenticationFilter;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,7 @@ public class SecurityConfig {
                         })
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/logout", "/api/v1/auth/me").permitAll()
                         .requestMatchers("/api/v1/push/vapid-public-key").permitAll()

@@ -42,8 +42,8 @@ public class SseEmitterService {
                     .comment("ok")
                     .name("connected")
                     .data("Connected to Notification Center stream"));
-        } catch (Exception e) {
-            emitters.remove(emitter);
+        } catch (IOException e) {
+            removeEmitter(emitter);
         }
 
         return emitter;
@@ -71,12 +71,19 @@ public class SseEmitterService {
                 emitter.send(SseEmitter.event()
                         .name(eventName)
                         .data(jsonPayload));
-            } catch (Exception e) {
+            } catch (IOException e) {
+                removeEmitter(emitter);
                 deadEmitters.add(emitter);
             }
         }
 
         emitters.removeAll(deadEmitters);
+    }
+
+    private void removeEmitter(SseEmitter emitter) {
+        if (emitters.remove(emitter)) {
+            emitter.complete();
+        }
     }
 
     @Scheduled(fixedRate = 25000)
