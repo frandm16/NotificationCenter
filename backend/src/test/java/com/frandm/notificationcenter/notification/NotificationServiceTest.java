@@ -34,8 +34,9 @@ public class NotificationServiceTest {
 
     @BeforeEach
     void setUp() {
-        SseEmitterService sseEmitterService = new SseEmitterService();
-        PushNotificationService pushService = new PushNotificationService(pushSubscriptionRepository, "", "", "", new ObjectMapper());
+        ObjectMapper objectMapper = new ObjectMapper();
+        SseEmitterService sseEmitterService = new SseEmitterService(objectMapper);
+        PushNotificationService pushService = new PushNotificationService(pushSubscriptionRepository, "", "", "", objectMapper);
         notificationService = new NotificationService(notificationRepository, sseEmitterService, pushService);
     }
 
