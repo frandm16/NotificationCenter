@@ -34,14 +34,9 @@ export function Navbar({
                 <Bell size={20} className="hidden sm:block" />
               </div>
               <div>
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="font-bold tracking-tight text-white text-sm sm:text-base">
-                    Notification Center
-                  </span>
-                  <span className="hidden sm:inline-block rounded-full bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold text-neutral-400 border border-neutral-700/50">
-                    v1.0
-                  </span>
-                </div>
+                <span className="font-bold tracking-tight text-white text-sm sm:text-base">
+                  Notification Center
+                </span>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span
                     className={`h-2 w-2 rounded-full transition-colors ${

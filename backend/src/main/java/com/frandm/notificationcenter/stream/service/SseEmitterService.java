@@ -39,9 +39,10 @@ public class SseEmitterService {
 
         try {
             emitter.send(SseEmitter.event()
+                    .comment("ok")
                     .name("connected")
                     .data("Connected to Notification Center stream"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             emitters.remove(emitter);
         }
 
