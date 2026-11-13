@@ -71,7 +71,7 @@ public class SseEmitterService {
                 emitter.send(SseEmitter.event()
                         .name(eventName)
                         .data(jsonPayload));
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException e) {
                 removeEmitter(emitter);
                 deadEmitters.add(emitter);
             }

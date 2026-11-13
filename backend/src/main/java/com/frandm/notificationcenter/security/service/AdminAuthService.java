@@ -19,7 +19,13 @@ public class AdminAuthService {
             PasswordEncoder passwordEncoder,
             RateLimiterService rateLimiterService
     ) {
-        this.expectedUsername = expectedUsername != null ? expectedUsername.trim() : "admin";
+        if (expectedUsername == null || expectedUsername.isBlank()) {
+            throw new IllegalStateException("ADMIN_USERNAME must be configured");
+        }
+        if ((configuredHash == null || configuredHash.isBlank()) && (plainPassword == null || plainPassword.isBlank())) {
+            throw new IllegalStateException("ADMIN_PASSWORD_HASH or ADMIN_PASSWORD must be configured");
+        }
+        this.expectedUsername = expectedUsername.trim();
         this.passwordEncoder = passwordEncoder;
         this.rateLimiterService = rateLimiterService;
 

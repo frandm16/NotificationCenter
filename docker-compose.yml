@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-notification_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_this_secret_password}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME:-notification_center}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -29,10 +29,10 @@ services:
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-notification_center}
       DB_USER: ${DB_USER:-notification_user}
-      DB_PASSWORD: ${DB_PASSWORD:-change_this_secret_password}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET:?Set a unique JWT_SECRET of at least 32 characters}
-      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change_me_immediately}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?Set ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:7778}

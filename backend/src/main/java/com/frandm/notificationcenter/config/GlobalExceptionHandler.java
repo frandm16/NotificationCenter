@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", OffsetDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Bad Request");
-        body.put("message", ex.getMessage());
+        body.put("message", "The request could not be processed");
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }

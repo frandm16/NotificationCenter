@@ -21,14 +21,14 @@ public class JwtService {
             @Value("${app.security.jwt-secret}") String jwtSecret,
             @Value("${app.security.cookie-max-age:604800}") long cookieMaxAgeSeconds
     ) {
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            throw new IllegalStateException("JWT_SECRET must be configured");
+        }
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         if (keyBytes.length < 32) {
-            byte[] padded = new byte[32];
-            System.arraycopy(keyBytes, 0, padded, 0, Math.min(keyBytes.length, 32));
-            this.secretKey = Keys.hmacShaKeyFor(padded);
-        } else {
-            this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+            throw new IllegalStateException("JWT_SECRET must contain at least 32 UTF-8 bytes");
         }
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMillis = cookieMaxAgeSeconds * 1000L;
     }
 

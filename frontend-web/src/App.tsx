@@ -74,8 +74,15 @@ export function App() {
   const { status: streamStatus } = useSseStream(
     {
       onNewNotification: (newNotif) => {
-        setNotifications((prev) => [newNotif, ...prev.filter((n) => n.id !== newNotif.id)]);
-        setUnreadCount((c) => c + 1);
+        const matchesFilters =
+          (!selectedSource || newNotif.source === selectedSource) &&
+          (!unreadOnly || !newNotif.read) &&
+          (!selectedLevel || newNotif.level === selectedLevel);
+
+        setNotifications((prev) => {
+          const withoutNotification = prev.filter((n) => n.id !== newNotif.id);
+          return matchesFilters ? [newNotif, ...withoutNotification] : withoutNotification;
+        });
         setSources((prev) => (prev.includes(newNotif.source) ? prev : [...prev, newNotif.source]));
       },
       onNotificationRead: ({ id }) => {
