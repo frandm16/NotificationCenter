@@ -34,7 +34,7 @@ export function LoginPage() {
           </div>
           <h1 className="mt-4 text-lg font-bold text-white tracking-tight">Notification Center</h1>
           <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-            Admin access to manage notifications and API tokens
+            Access to manage notifications and API tokens
           </p>
         </div>
 
@@ -52,7 +52,6 @@ export function LoginPage() {
             </label>
             <input
               type="text"
-              value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-xl border border-[var(--app-border)] bg-neutral-900/80 px-3.5 py-2.5 text-xs text-white placeholder-neutral-500 focus:border-indigo-500 focus:outline-none transition-colors"
               required
@@ -68,7 +67,6 @@ export function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••••••"
               className="w-full rounded-xl border border-[var(--app-border)] bg-neutral-900/80 px-3.5 py-2.5 text-xs text-white placeholder-neutral-500 focus:border-indigo-500 focus:outline-none transition-colors"
               required
             />
@@ -89,10 +87,6 @@ export function LoginPage() {
             )}
           </button>
         </form>
-
-        <p className="mt-6 text-center text-[11px] text-neutral-500">
-          Protected single-user administration
-        </p>
       </div>
     </div>
   );
