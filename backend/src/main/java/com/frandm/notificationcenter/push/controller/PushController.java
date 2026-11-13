@@ -1,6 +1,7 @@
 package com.frandm.notificationcenter.push.controller;
 
 import com.frandm.notificationcenter.push.dto.PushSubscriptionRequest;
+import com.frandm.notificationcenter.push.dto.VapidKeyPairResponse;
 import com.frandm.notificationcenter.push.dto.VapidKeyResponse;
 import com.frandm.notificationcenter.push.model.PushSubscription;
 import com.frandm.notificationcenter.push.service.PushNotificationService;
@@ -28,6 +29,11 @@ public class PushController {
     @GetMapping("/vapid-public-key")
     public VapidKeyResponse getVapidPublicKey() {
         return pushService.getVapidPublicKey();
+    }
+
+    @PostMapping("/generate-keys")
+    public ResponseEntity<VapidKeyPairResponse> generateKeys() {
+        return ResponseEntity.ok(pushService.generateVapidKeyPair());
     }
 
     @PostMapping("/subscriptions")

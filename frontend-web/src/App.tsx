@@ -67,6 +67,7 @@ export function App() {
       void fetchNotifications();
       void fetchUnreadCount();
       void fetchSources();
+      void pushService.isSubscribed().then(setPushEnabled);
     }
   }, [user?.authenticated, fetchNotifications, fetchUnreadCount, fetchSources]);
 

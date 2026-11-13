@@ -30,6 +30,18 @@ export const pushService = {
     return data;
   },
 
+  async isSubscribed(): Promise<boolean> {
+    if (!this.isSupported()) return false;
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return false;
+      const sub = await reg.pushManager.getSubscription();
+      return !!sub;
+    } catch {
+      return false;
+    }
+  },
+
   async enablePush(): Promise<boolean> {
     if (!this.isSupported()) return false;
 

@@ -1,5 +1,6 @@
 package com.frandm.notificationcenter.notification;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.frandm.notificationcenter.ingest.dto.IngestNotificationRequest;
 import com.frandm.notificationcenter.notification.dto.NotificationResponse;
 import com.frandm.notificationcenter.notification.model.NotificationLevel;
@@ -34,7 +35,7 @@ public class NotificationServiceTest {
     @BeforeEach
     void setUp() {
         SseEmitterService sseEmitterService = new SseEmitterService();
-        PushNotificationService pushService = new PushNotificationService(pushSubscriptionRepository, "", "", "");
+        PushNotificationService pushService = new PushNotificationService(pushSubscriptionRepository, "", "", "", new ObjectMapper());
         notificationService = new NotificationService(notificationRepository, sseEmitterService, pushService);
     }
 
