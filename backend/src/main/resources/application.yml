@@ -1,0 +1,38 @@
+server:
+  port: ${BACKEND_PRIVATE_PORT:8080}
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: notification-center-backend
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:notification_center}
+    username: ${DB_USER:notification_user}
+    password: ${DB_PASSWORD:change_this_secret_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+app:
+  security:
+    jwt-secret: ${JWT_SECRET:dev_secret_key_that_must_be_at_least_32_characters_long_for_security_checks}
+    cookie-secure: ${COOKIE_SECURE:false}
+    cookie-name: nc_session
+    cookie-max-age: 604800
+    admin-username: ${ADMIN_USERNAME:admin}
+    admin-password: ${ADMIN_PASSWORD:change_me_immediately}
+    admin-password-hash: ${ADMIN_PASSWORD_HASH:}
+    cors-allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:7778}
+  push:
+    vapid-public-key: ${VAPID_PUBLIC_KEY:}
+    vapid-private-key: ${VAPID_PRIVATE_KEY:}
+    vapid-subject: ${VAPID_SUBJECT:mailto:admin@frandm.dev}

@@ -1,0 +1,62 @@
+services:
+  db:
+    image: postgres:16
+    container_name: notification-center-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-notification_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_this_secret_password}
+      POSTGRES_DB: ${DB_NAME:-notification_center}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-notification_user} -d ${DB_NAME:-notification_center}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: notification-center-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      BACKEND_PRIVATE_PORT: ${BACKEND_PRIVATE_PORT:-8080}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-notification_center}
+      DB_USER: ${DB_USER:-notification_user}
+      DB_PASSWORD: ${DB_PASSWORD:-change_this_secret_password}
+      JWT_SECRET: ${JWT_SECRET:?Set a unique JWT_SECRET of at least 32 characters}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change_me_immediately}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:7778}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:admin@frandm.dev}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PUBLIC_PORT:-8083}:${BACKEND_PRIVATE_PORT:-8080}"
+
+  frontend:
+    build:
+      context: ./frontend-web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+    container_name: notification-center-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-7778}:80"
+
+volumes:
+  postgres_data:
