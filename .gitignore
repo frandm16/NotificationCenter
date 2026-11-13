@@ -42,5 +42,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+AGENTS.md
+CLAUDE.md
+.claude
+
 .DS_Store
 Thumbs.db

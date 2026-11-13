@@ -1,0 +1,165 @@
+# Notification Center
+
+Centralized notification receiver and dashboard for self-hosted services and homelab infrastructure. It ingests alerts over HTTP POST, verifies service API tokens, streams updates in real time to a web dashboard, and dispatches Web Push notifications to mobile devices.
+
+Designed to integrate with StudyZen, Proxmox VE, NUT (Network UPS Tools), smart plugs, and the Home dashboard.
+
+---
+
+## Architecture and Design
+
+### Ingestion and Token Security
+- External services send alerts to `POST /api/v1/notifications` using a Bearer token (`nc_live_*`).
+- Tokens are stored as SHA-256 hashes with a visible prefix for identification. Raw tokens are generated once and never stored in plain text.
+- The `source` field (e.g. `studyzen`, `proxmox`, `nut`) is bound to the token and determined by the server upon authentication, preventing callers from spoofing origin services.
+- Optional alert deduplication via `dedupKey`: when an unread notification with the same key exists, its message and timestamp are updated instead of creating a duplicate row.
+
+### Dashboard and Access Control
+- Single-user web interface with no public registration.
+- Web authentication uses BCrypt password verification and issues `HttpOnly`, `SameSite=Strict` session cookies.
+- Login endpoint includes in-memory rate limiting with temporary lockouts against brute-force attempts.
+- Tokens can be created with granular scopes (`notify` for ingestion, `read` for consuming services such as the Home widget).
+
+### Real-Time Delivery and Push
+- Dashboard updates use Server-Sent Events (`GET /api/v1/stream`) with periodic heartbeats to maintain connections through reverse proxies.
+- Mobile notifications use the Web Push API (VAPID) handled by a service worker and installable PWA manifest.
+
+---
+
+## Tech Stack
+
+- **Backend**: Java 21, Spring Boot 3.2, Spring Data JPA, Spring Security, PostgreSQL 16, Flyway.
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS 4, Lucide Icons.
+- **Reverse Proxy**: Nginx configured with unbuffered streaming for SSE.
+- **Containers**: Docker Compose, Eclipse Temurin 21 JRE, Node 22 Alpine, Nginx Alpine.
+
+---
+
+## Directory Structure
+
+```text
+NotificationCenter/
+├── backend/                  # Spring Boot service
+│   ├── src/main/java/com/frandm/notificationcenter/
+│   │   ├── auth/             # Session login, logout, me endpoint
+│   │   ├── ingest/           # POST /api/v1/notifications (Bearer notify scope)
+│   │   ├── notification/     # CRUD, filtering, read status
+│   │   ├── push/             # Push subscriptions and VAPID handling
+│   │   ├── security/         # Dual authentication filter (tokens and session cookies)
+│   │   ├── stream/           # SSE emitter service and endpoint
+│   │   └── token/            # Token generation, hashing, and lifecycle
+│   ├── src/main/resources/
+│   │   ├── db/migration/     # Flyway SQL migrations
+│   │   └── application.yml
+│   └── pom.xml
+├── frontend-web/             # React dashboard
+│   ├── public/               # Service worker (sw.js) and manifest
+│   ├── src/
+│   │   ├── components/       # Filter bar, alert cards, token manager, test modal
+│   │   ├── context/          # Authentication state provider
+│   │   ├── hooks/            # SSE subscription hook
+│   │   ├── services/         # Axios API clients
+│   │   └── types/            # TypeScript interfaces
+│   └── package.json
+├── docker-compose.yml        # Multi-container deployment definition
+└── .env.example              # Environment variables template
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Docker and Docker Compose (production / containerized run)
+- Or locally: Java 21+, Maven 3.9+, Node.js 20+, PostgreSQL 16
+
+### 1. Environment Configuration
+Copy the template and set passwords and secrets:
+
+```bash
+cp .env.example .env
+```
+
+Ensure `JWT_SECRET`, `DB_PASSWORD`, and `ADMIN_PASSWORD` are defined before launching.
+
+### 2. Run with Docker Compose
+
+```bash
+docker compose up -d --build
+```
+
+Services will be available at:
+- Web Dashboard: `http://localhost:7778`
+- Backend API: `http://localhost:8083`
+- PostgreSQL: `localhost:5432` (internal network by default)
+
+### 3. Local Development
+
+Backend:
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+Frontend:
+```bash
+cd frontend-web
+npm install
+npm run dev
+```
+
+---
+
+## API Overview
+
+### Ingestion
+
+**`POST /api/v1/notifications`**
+
+Headers:
+```http
+Authorization: Bearer nc_live_0123456789abcdef...
+Content-Type: application/json
+```
+
+Body:
+```json
+{
+  "title": "UPS Battery Alert",
+  "body": "Utility power lost. Remaining runtime: 35 minutes.",
+  "level": "WARNING",
+  "url": "https://pve.frandm.dev",
+  "dedupKey": "ups-power-loss"
+}
+```
+
+Levels supported: `INFO`, `SUCCESS`, `WARNING`, `ERROR`.
+
+### Management and Consumption
+
+- `GET /api/v1/notifications` — List alerts with query filters (`source`, `read`, `level`, `page`, `size`).
+- `GET /api/v1/notifications/sources` — Distinct list of reporting sources.
+- `GET /api/v1/notifications/unread-count` — Count of unread notifications.
+- `PATCH /api/v1/notifications/{id}/read` — Mark an alert as read.
+- `POST /api/v1/notifications/read-all` — Mark all alerts as read.
+- `DELETE /api/v1/notifications/{id}` — Delete an alert.
+- `GET /api/v1/stream` — Connect to the SSE event stream.
+- `GET /api/v1/tokens` — List existing API tokens.
+- `POST /api/v1/tokens` — Create an API token (displays raw token once).
+- `PATCH /api/v1/tokens/{id}/revoke` — Revoke an active token.
+- `POST /api/v1/auth/login` — Authenticate admin session.
+- `POST /api/v1/auth/logout` — Invalidate admin session.
+
+---
+
+## Build and Verification
+
+Run backend unit and integration tests:
+```powershell
+mvn test
+```
+
+Run frontend production bundle check:
+```powershell
+npm --prefix frontend-web run build
+```
